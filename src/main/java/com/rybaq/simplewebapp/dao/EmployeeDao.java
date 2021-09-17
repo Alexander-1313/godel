@@ -18,18 +18,12 @@ public class EmployeeDao {
     }
 
     public void addEmployee(Employee e){
-        String sql = "insert into employee (first_name, last_name, job_title, department_id, gender, dateOfBirth) values(";
-        jdbcTemplate.update(sql + "\'" + e.getFirstName() + "\' , "
-                        + "\'" + e.getLastName() + "\' , "
-                + "\'" + e.getJobTitle() + "\' , "
-                + "\'" + e.getDepartmentId() + "\' , "
-                + "\'" + e.getGender() + "\' , "
-                + "\'" + e.getDateOfBirth() + "\'"
-                + ")");
+        final String sql = "insert into employee (first_name, last_name, job_title, department_id, gender, dateOfBirth) values(?, ?, ?, ?,? ,?)";
+        jdbcTemplate.update(sql, e.getFirstName(), e.getLastName(), e.getJobTitle(), e.getDepartmentId(), e.getGender(), e.getDateOfBirth());
     }
 
     public void deleteEmployeeById(Long id){
-        String sql = "delete from employee where id=?";
+        final String sql = "delete from employee where id=?";
         jdbcTemplate.update(sql, id);
     }
 

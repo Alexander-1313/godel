@@ -1,13 +1,11 @@
 package com.rybaq.simplewebapp.rest;
 
-import com.rybaq.simplewebapp.dao.EmployeeDao;
 import com.rybaq.simplewebapp.dto.Employee;
 import com.rybaq.simplewebapp.exception.ResourceNotFoundException;
 import com.rybaq.simplewebapp.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,18 +20,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmployeeController {
 
-    private final EmployeeDao employeeDao;
     private final EmployeeService employeeService;
 
     @GetMapping("/employees")
     public ResponseEntity<List<Employee>> getAll() throws ResourceNotFoundException {
-        List<Employee> employees = employeeService.getAllEmployees().orElseThrow(() -> new ResourceNotFoundException("there are no employees"));
+        List<Employee> employees = employeeService.getAllEmployees();
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
     @GetMapping("/employees/{id}")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) throws ResourceNotFoundException {
-        Employee employee = employeeService.getEmployeeById(id).orElseThrow(() -> new ResourceNotFoundException("there are no employee with id = " + id));
+        Employee employee = employeeService.getEmployeeById(id);
         return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
@@ -49,9 +46,9 @@ public class EmployeeController {
         return new ResponseEntity<>("employee with id=" + id + " was removed", HttpStatus.OK);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<String> updateEmployeeById(@RequestBody Employee employee){
-        employeeService.updateEmployee(employee);
+    @PutMapping("/employees/{id}")
+    public ResponseEntity<String> updateEmployeeById(@RequestBody Employee employee, @PathVariable Long id) throws ResourceNotFoundException {
+        employeeService.updateEmployee(id, employee);
         return new ResponseEntity<>("employee with id = " + employee.getId() + " was updated", HttpStatus.OK);
     }
 }

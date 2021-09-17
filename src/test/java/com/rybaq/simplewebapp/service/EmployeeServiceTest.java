@@ -3,19 +3,18 @@ package com.rybaq.simplewebapp.service;
 import com.rybaq.simplewebapp.dao.EmployeeDao;
 import com.rybaq.simplewebapp.dto.Employee;
 import com.rybaq.simplewebapp.dto.Gender;
+import com.rybaq.simplewebapp.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -34,7 +33,7 @@ class EmployeeServiceTest {
 
     @BeforeEach
     void setUp(){
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         employee.setJobTitle("java developer");
         employee.setLastName("Rybak");
         employee.setFirstName("Alexander");
@@ -43,20 +42,20 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void getAllEmployees() {
+    void getAllEmployees() throws ResourceNotFoundException {
         List<Employee> employeeList = new ArrayList<>();
         employeeList.add(employee);
 
         when(employeeDao.getAllEmployees()).thenReturn(employeeList);
-        Optional<List<Employee>> allEmployees = employeeService.getAllEmployees();
+        List<Employee> allEmployees = employeeService.getAllEmployees();
 
-        assertEquals(allEmployees.get(), employeeList);
+        assertEquals(allEmployees, employeeList);
     }
 
     @Test
-    void getEmployeeById() {
+    void getEmployeeById() throws ResourceNotFoundException {
         when(employeeDao.getEmployeeById(anyLong())).thenReturn(employee);
-        Optional<Employee> employeeById = employeeService.getEmployeeById(anyLong());
-        assertEquals(employeeById.get(), employee);
+        Employee employeeById = employeeService.getEmployeeById(anyLong());
+        assertEquals(employeeById, employee);
     }
 }
